@@ -61,7 +61,7 @@ When you need cross-agent memory, prefer this rule:
   once a repo marks a slice as review-gated.
 
 Checker profiles are also consumer-local. The shared package ships only the
-neutral example profile in `agent-contract/repos/example.env`. Real repo
+neutral example profile in `repos/example.env`. Real repo
 profiles belong in a sibling local-only directory such as
 `agent-contract-local/profiles/`, so another repo does not inherit this
 workspace's overlays by copying the shared package.
@@ -105,9 +105,9 @@ This package is the shared standard. The local `AGENTS.md` is the adapter.
 ## Checker Usage
 
 Run the shared checker with a consumer-local profile and repo root. The checker
-first looks for `agent-contract-local/profiles/<profile>.env` at the provided
-repo root and then walks upward through parent directories before falling back
-to the shared `repos/<profile>.env` file.
+looks for `agent-contract-local/profiles/<profile>.env` at the provided repo
+root and then walks upward through parent directories. The shared
+`repos/example.env` file is a template to copy, not a runtime fallback.
 
 ```bash
 mkdir -p agent-contract-local/profiles
