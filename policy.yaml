@@ -1,0 +1,78 @@
+version: 1
+shared_contract: AGENT_CONTRACT.md
+workflow_diagram: workflow.mmd
+authoritative_chain:
+  - local_repo_adapter
+  - active_master_index
+  - active_task_surface
+  - active_plan_surface
+  - stable_architecture_docs
+retention:
+  completed_tasks: delete_after_propagation
+  unlinked_plans: inactive
+  archive_default: false
+scratch_sinks:
+  root: .agent-scratch
+  redirected_paths:
+    - .claude
+    - .cursor
+    - .gemini
+    - .kilocode
+    - .kilo
+    - .antigravity
+    - .roo
+    - .windsurf
+    - docs/superpowers
+external_memory:
+  allowed: true
+  authority: advisory_only
+  stores:
+    - qdrant
+  default_read_filter:
+    status:
+      include:
+        - approved
+      exclude:
+        - proposed
+        - stale
+        - superseded
+        - retired
+  lifecycle:
+    statuses:
+      - proposed
+      - approved
+      - stale
+      - superseded
+      - retired
+    verification_rules:
+      approved_requires:
+        - canonical_uri
+        - verified_at
+      stale_when:
+        - verification_missing
+        - verification_failed
+        - canonical_source_drift_suspected
+      superseded_requires:
+        - superseded_by
+      retired_requires:
+        - retired_at
+  required_fields:
+    all_records:
+      - workspace_id
+      - repo_id
+      - memory_scope
+      - status
+    non_proposed_records:
+      - canonical_uri
+    approved_records:
+      - verified_at
+  optional_fields:
+    - supersedes
+    - superseded_by
+    - retired_at
+    - retired_reason
+    - verification_note
+prohibited_parallel_surfaces:
+  - docs/superpowers/plans
+  - docs/archive-as-active
+  - subsystem-local-task-ledgers

@@ -1,0 +1,15 @@
+flowchart TD
+    A[Read local AGENTS.md] --> B[Read active master planning surface]
+    B --> C{Is there an active linked task?}
+    C -->|Yes| D[Open the linked task]
+    C -->|No| E[Create one granular task]
+    D --> F[Do the smallest clear slice]
+    E --> F
+    F --> G{Did durable truth change?}
+    G -->|Yes| H[Update canonical docs]
+    G -->|No| I[Skip canonical doc edits]
+    H --> J{Task complete?}
+    I --> J
+    J -->|No| K[Keep task active]
+    J -->|Yes| L[Delete completed task file]
+    L --> M[Keep active surfaces small]
