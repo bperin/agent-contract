@@ -61,6 +61,19 @@ Read order:
 - do not treat the slice as complete until findings are fixed, explicitly
   deferred, or disproven with evidence
 
+## Implementation Hygiene
+
+- keep files focused and split them when they become hard to scan
+- review changed file sizes before commit and record the split/keep decision
+  when a file becomes mechanically large
+- search for duplicate request builders, query builders, prompt rendering,
+  signer/nonce handling, validation rules, and result formatting before commit
+- respect local package boundaries and DDD rules; provider, database,
+  transport, AI, and runtime DTOs must not leak across forbidden boundaries
+- keep entrypoints boring: wiring belongs there, business rules do not
+- avoid vague `helpers`, `utils`, `common`, `shared`, or `base` buckets unless
+  the repo deliberately owns that convention and review accepts it
+
 ## Retention Rules
 
 - completed task files are disposable execution records after durable guidance

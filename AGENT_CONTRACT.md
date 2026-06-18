@@ -50,7 +50,7 @@ For slices that the local repo marks as review-gated, the minimum portable
 review loop is:
 
 - implementation reviewer: bugs, regressions, duplicate logic, unnecessary code, missing tests
-- architecture and DDD reviewer: package boundaries, typed contracts, workflow shape, anti-patterns
+- architecture and DDD reviewer: package boundaries, typed contracts, workflow shape, anti-patterns, dependency direction, DTO boundary leaks
 - drift and governance reviewer: doc drift, stale control-plane surfaces, workflow-policy violations
 
 Implementation review, architecture review, and drift/governance review are all
@@ -64,6 +64,37 @@ This shared contract names the portable role set and the minimum hard gates once
 review is required. It does not require the full three-review loop for every
 trivial, docs-only, or otherwise non-gated slice unless the local repo adapter
 adds that requirement.
+
+## Implementation Hygiene
+
+Every non-trivial implementation slice must be reviewed for boundary discipline,
+readability, and duplication before it is treated as complete.
+
+- Keep files focused. A file should have a clear reason to exist and a readable
+  responsibility. If a file becomes hard to scan, split it by concrete
+  capability instead of letting it become a dumping ground.
+- Review changed file sizes before commit. Large files are not automatically
+  wrong, but a reviewer must explicitly accept any file that has become
+  difficult to read or mechanically oversized.
+- Review duplicate logic before commit. Repeated request builders, query
+  builders, parsing logic, prompt rendering, signer/nonce code, validation
+  rules, and result formatting must either be extracted into a focused
+  abstraction or explicitly justified as intentionally local.
+- Respect the local repo's declared architecture. If the repo declares DDD,
+  hexagonal, layered, clean, or another boundary model, architecture review must
+  verify dependency direction, ownership of interfaces, and that provider,
+  database, transport, AI, or runtime DTOs do not leak across forbidden
+  boundaries.
+- Entrypoints should stay boring. Command, worker, server, or UI entrypoints may
+  load config, initialize dependencies, wire adapters, and start processes, but
+  should not accumulate business rules, provider parsing, SQL, prompt rendering,
+  or domain calculations.
+- Shared helpers are allowed only when they name a concrete responsibility.
+  Avoid vague `helpers`, `utils`, `common`, `shared`, or `base` buckets unless
+  those names are already the repo's deliberate convention and the reviewer
+  accepts them.
+- The task record for a gated slice must state how file hygiene, duplication,
+  and boundary findings were fixed, deferred, or disproven.
 
 ## Scratch Output Rules
 
