@@ -43,6 +43,7 @@ helpful but non-authoritative.
 - `templates/AGENTS.generated.md.tmpl`: generated local adapter template
 - `repos/profile.schema.env`: consumer profile contract
 - `scripts/apply.sh`: install or refresh the shared workflow in a consumer repo
+- `scripts/migrate.sh`: reconcile common legacy repo drift, then apply and check
 - `scripts/check.sh`: validate a consumer repo against the generated workflow
 - `scripts/doctor.sh`: explain adoption failures in human-readable form
 - `scripts/qdrant_memory.sh`: optional advisory workflow-memory helper
@@ -86,6 +87,26 @@ What it does:
 - overwrites the generated local `AGENTS.md`
 - creates `.agent-scratch/`
 - reconciles known tool scratch paths into that sink
+
+### Migrate
+
+`migrate.sh` is a one-time adoption/bootstrap helper for repos with legacy
+workflow drift. It is not a general repo rewriter.
+
+```bash
+sh /path/to/agent-contract/scripts/migrate.sh <profile> [repo-root]
+```
+
+What it does:
+
+- creates missing declared task, plan, and architecture directories
+- ensures the parent directory for the declared master-plan path exists, but
+  does not author the canonical master-plan file for the consumer repo
+- repairs the common `.gitignore` drift where a profile-declared managed
+  worktree root was blanket-ignored instead of only ignoring its scratch sinks
+- runs `apply.sh`
+- runs `check.sh`, which will still fail until the consumer repo defines any
+  still-missing canonical control-plane files such as the master plan
 
 ### Check
 
