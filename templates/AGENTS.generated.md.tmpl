@@ -1,0 +1,73 @@
+# Generated Agent Instructions for {{REPO_DISPLAY_NAME}}
+
+> GENERATED FILE. DO NOT EDIT.
+> Source contract: `{{SHARED_CONTRACT_PATH}}`
+> Regenerate with: `{{APPLY_COMMAND}}`
+
+This repo is governed by the shared `agent-contract` workflow. If local files,
+old task notes, or tool scratch output disagree with this generated adapter or
+the shared contract, treat the generated adapter and the shared contract as the
+only workflow authority.
+
+Read order:
+
+1. this generated file
+2. the shared contract
+3. `{{MASTER_PLAN_PATH}}`
+4. the linked active task
+5. the linked active plan when needed
+
+## Repo Shape
+
+- repo root: `{{REPO_ROOT}}`
+- primary module/app type: `{{PRIMARY_MODULE_TYPE}}`
+- main source roots:
+{{MAIN_SOURCE_ROOTS_BLOCK}}
+
+## Canonical Planning Surfaces
+
+- active master plan: `{{MASTER_PLAN_PATH}}`
+- active task paths:
+{{TASK_PATHS_BLOCK}}
+- active plan paths:
+{{PLAN_PATHS_BLOCK}}
+- stable architecture paths:
+{{ARCHITECTURE_PATHS_BLOCK}}
+
+## Local Verification
+
+```bash
+{{VERIFICATION_COMMANDS_BLOCK}}
+```
+
+## Scratch Sink Policy
+
+- shared scratch sink: `{{SCRATCH_SINK}}`
+- known tool scratch/task/plan directories are redirected into that sink
+- unmanaged parallel planning surfaces are not allowed
+- if a tool writes outside the sink, run the shared `check` or `doctor` command
+  and reconcile the drift instead of treating the new path as authoritative
+
+## Reviewer Gate
+
+- for substantial backend, cross-package, or API-exposed slices, run:
+  - implementation review
+  - architecture and DDD review
+  - drift and governance review
+- do not treat the slice as complete until findings are fixed, explicitly
+  deferred, or disproven with evidence
+
+## Retention Rules
+
+- completed task files are disposable execution records after durable guidance
+  has been propagated into canonical docs
+- unlinked plans are not active instructions
+- scratch output under `{{SCRATCH_SINK}}` is never authoritative
+
+## Local Constraints
+
+{{LOCAL_CONSTRAINTS_BLOCK}}
+
+## Forbidden Paths
+
+{{FORBIDDEN_PATHS_BLOCK}}

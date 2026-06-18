@@ -1,8 +1,15 @@
-version: 1
+version: 2
 shared_contract: AGENT_CONTRACT.md
 workflow_diagram: workflow.mmd
+generated_adapter:
+  required: true
+  generator: scripts/apply.sh
+  target: AGENTS.md
+  overwrite_mode: always
+  drift_check: byte_exact
 authoritative_chain:
-  - local_repo_adapter
+  - generated_local_repo_adapter
+  - shared_contract
   - active_master_index
   - active_task_surface
   - active_plan_surface
@@ -13,6 +20,7 @@ retention:
   archive_default: false
 scratch_sinks:
   root: .agent-scratch
+  ownership: shared_agent_contract
   redirected_paths:
     - .claude
     - .cursor
@@ -23,6 +31,12 @@ scratch_sinks:
     - .roo
     - .windsurf
     - docs/superpowers
+tool_registry:
+  managed_by: scripts/lib/registry.sh
+  unknown_path_policy: fail_closed
+  supported_strategies:
+    - symlink_to_sink
+    - move_then_symlink
 external_memory:
   allowed: true
   authority: advisory_only

@@ -22,7 +22,8 @@ CLI tools, keep the layers separate:
 1. Shared contract
    - The reusable workflow rules in this package.
 2. Local adapter
-   - The repo-specific `AGENTS.md` that adds only local facts.
+   - The generated repo-specific `AGENTS.md` plus the local profile that feeds
+     it.
 3. Canonical control plane
    - The repo's approved planning and architecture docs.
 4. Scratch sink
@@ -39,36 +40,99 @@ helpful but non-authoritative.
 - `AGENT_CONTRACT.md`: the portable workflow contract
 - `workflow.mmd`: Mermaid source for the canonical execution flow
 - `policy.yaml`: machine-readable policy surface for future CI or lint checks
-- `templates/AGENTS.local-template.md`: thin per-repo adapter template
-- `scripts/check.sh`: simple shell checker for control-plane drift
+- `templates/AGENTS.generated.md.tmpl`: generated local adapter template
+- `repos/profile.schema.env`: consumer profile contract
+- `scripts/apply.sh`: install or refresh the shared workflow in a consumer repo
+- `scripts/check.sh`: validate a consumer repo against the generated workflow
+- `scripts/doctor.sh`: explain adoption failures in human-readable form
+- `scripts/qdrant_memory.sh`: optional advisory workflow-memory helper
 
 ## Intended Use
 
-Each real repo should have a thin local `AGENTS.md` file that:
+Each real repo should carry:
 
-1. points to this shared contract
-2. adds only local repo facts
-3. avoids redefining the full workflow
+1. a local profile under `agent-contract-local/profiles/`
+2. a generated `AGENTS.md`
+3. a repo-owned scratch sink such as `.agent-scratch/`
 
-When you need cross-agent memory, prefer this rule:
+The local profile provides facts, not workflow prose.
+The generated `AGENTS.md` is overwritten by `apply.sh` and should never be
+maintained by hand.
 
-- If a fact must be trusted by any new agent, promote it into the repo control
-  plane or the external system of record that owns it.
-- If a fact is only there to help a future agent move faster, keep it in
-  personal memory and make it reference the authoritative source.
-- Local `AGENTS.md` files own when the full reviewer loop is required. The
-  shared contract only defines the portable reviewer roles and hard-gate shape
-  once a repo marks a slice as review-gated.
+## Consumer Profile Model
 
-Checker profiles are also consumer-local. The shared package ships only the
-neutral example profile in `repos/example.env`. Real repo
-profiles belong in a sibling local-only directory such as
-`agent-contract-local/profiles/`, so another repo does not inherit this
-workspace's overlays by copying the shared package.
+See `repos/profile.schema.env` for the current contract.
+
+The important rule is:
+
+- keep local facts in the profile
+- keep workflow policy in the shared contract
+- let `apply.sh` generate the local adapter deterministically
+
+If a workspace has subtrees that are not nested git repos but still need tool
+scratch interception, declare them in `MANAGED_WORKTREE_ROOTS`.
+
+## Commands
+
+### Apply
+
+```bash
+sh /path/to/agent-contract/scripts/apply.sh <profile> <repo-root>
+```
+
+What it does:
+
+- loads the consumer profile
+- overwrites the generated local `AGENTS.md`
+- creates `.agent-scratch/`
+- reconciles known tool scratch paths into that sink
+
+### Check
+
+```bash
+sh /path/to/agent-contract/scripts/check.sh <profile> <repo-root>
+```
+
+What it does:
+
+- verifies generated `AGENTS.md` matches current shared output
+- verifies required planning surfaces exist
+- verifies known scratch paths are redirected into the sink
+- fails on unmanaged known scratch paths, rogue task/plan surfaces, or
+  forbidden local drift
+
+### Doctor
+
+```bash
+sh /path/to/agent-contract/scripts/doctor.sh <profile> <repo-root>
+```
+
+What it does:
+
+- runs targeted contract diagnostics
+- prints `BLOCK`, `WARN`, and `INFO` style operator feedback
+- helps explain why adoption currently fails
+
+## Known Tool Scratch Paths
+
+The shared registry currently manages these repo-local paths:
+
+- `.claude`
+- `.cursor`
+- `.gemini`
+- `.kilocode`
+- `.kilo`
+- `.antigravity`
+- `.roo`
+- `.windsurf`
+- `docs/superpowers`
+
+Known paths are redirected into `.agent-scratch/` for the repo root and each
+nested git root discovered under the consumer workspace.
 
 ## Qdrant Bootstrap
 
-This package now includes a first workflow-memory bootstrap script:
+This package includes a workflow-memory bootstrap script:
 
 - `scripts/qdrant_memory.sh`
 
@@ -79,39 +143,19 @@ Its purpose is narrow:
 - list records by `status`, `memory_scope`, and `workspace_id`
 - approve candidate records by state transition
 
-It does not make Qdrant authoritative for repo tasks, plans, or evidence. The
-managed collection is for cross-agent workflow memory only.
-
-Normal reads should filter to `status=approved` only. `proposed`, `stale`,
-`superseded`, and `retired` records should appear only in explicit maintenance
-or audit queries. Every non-proposed record must carry a `canonical_uri`, and
-every approved record must carry `verified_at` so approval means "checked
-against source" rather than "helpful guess."
-
-This package is the shared standard. The local `AGENTS.md` is the adapter.
+It does not make Qdrant authoritative for repo tasks, plans, evidence, or code.
+The managed collection is for cross-agent workflow memory only.
 
 ## Adoption In Another Repo
 
-1. Clone this repo beside the target repo or vendor its contents into the
-   target workspace.
-2. Create a thin local adapter from `templates/AGENTS.local-template.md`.
-3. Point that adapter at the repo's real control-plane docs and verification
-   commands.
-4. Copy `repos/example.env` to a local checker profile under
-   `<repo-root>/agent-contract-local/profiles/` and fill in the target repo's
-   required, forbidden, and scratch-redirected paths.
-5. Run `/path/to/agent-contract/scripts/check.sh <profile> <repo-root>`.
+1. Create `agent-contract-local/profiles/<profile>.env` from
+   `repos/example.env`.
+2. Fill in the repo facts.
+3. Run `apply.sh`.
+4. Run `check.sh`.
+5. Run `doctor.sh` if `check.sh` reports drift.
 
 ## Checker Usage
 
-Run the shared checker with a consumer-local profile and repo root. The checker
-looks for `agent-contract-local/profiles/<profile>.env` at the provided repo
-root and then walks upward through parent directories. The shared
-`repos/example.env` file is a template to copy, not a runtime fallback.
-
-```bash
-mkdir -p agent-contract-local/profiles
-cp /path/to/agent-contract/repos/example.env agent-contract-local/profiles/my-repo.env
-$EDITOR agent-contract-local/profiles/my-repo.env
-/path/to/agent-contract/scripts/check.sh my-repo /path/to/repo
-```
+The checker looks for `agent-contract-local/profiles/<profile>.env` at the
+provided repo root and then walks upward through parent directories.
