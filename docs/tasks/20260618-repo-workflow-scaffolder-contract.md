@@ -1,10 +1,10 @@
 ---
 id: 20260618-repo-workflow-scaffolder-contract
 title: Define repo workflow scaffolder contract
-status: in_progress
+status: done
 assignee: codex
 created_at: 2026-06-18
-completed_at:
+completed_at: 2026-06-18
 ---
 
 # Description
@@ -13,11 +13,11 @@ and enforces the same control-plane pattern for new and existing repos,
 regardless of which LLM, CLI, IDE, or agent runtime is operating in the repo.
 
 # Acceptance Criteria
-- [ ] Define the new-repo scaffold path.
-- [ ] Define the existing-repo adoption path.
-- [ ] Define tool-independent reviewer/subagent role requirements.
-- [ ] Define machine-checkable artifacts that force the workflow pattern.
-- [ ] Identify required docs and implementation follow-up slices.
+- [x] Define the new-repo scaffold path.
+- [x] Define the existing-repo adoption path.
+- [x] Define tool-independent reviewer/subagent role requirements.
+- [x] Define machine-checkable artifacts that force the workflow pattern.
+- [x] Identify required docs and implementation follow-up slices.
 
 # Product Boundary
 - `agent-contract` owns the workflow scaffold, generated local adapter,
@@ -41,3 +41,13 @@ regardless of which LLM, CLI, IDE, or agent runtime is operating in the repo.
   not just path existence and generated-file drift.
 - Define reviewer outputs in task files so implementation, architecture, and
   governance reviews can be supplied by any agent runtime.
+
+# Evidence
+- Wrote the owning design spec:
+  [`docs/specs/2026-06-18-repo-workflow-scaffolder-contract-design.md`](/Users/brian/code/agent-contract/docs/specs/2026-06-18-repo-workflow-scaffolder-contract-design.md)
+- The design defines `scaffold`, `apply`, `check`, `doctor`, and `migrate`
+  responsibilities.
+- The design defines a tool-independent reviewer/subagent artifact contract.
+- The design identifies implementation slices for self-adoption, scaffolding,
+  authority-graph validation, reviewer artifact enforcement, policy/registry
+  consolidation, and Qdrant verification hardening.
