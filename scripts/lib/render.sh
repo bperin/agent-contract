@@ -41,6 +41,7 @@ render_agents() {
       '{{PLAN_PATHS_BLOCK}}') render_list_block PLAN_PATHS '- ' ;;
       '{{ARCHITECTURE_PATHS_BLOCK}}') render_list_block ARCHITECTURE_PATHS '- ' ;;
       '{{VERIFICATION_COMMANDS_BLOCK}}') render_command_block ;;
+      '{{REQUIRED_SKILLS_BLOCK}}') render_text_block REQUIRED_SKILLS '- ' ;;
       '{{LOCAL_CONSTRAINTS_BLOCK}}') render_text_block LOCAL_CONSTRAINTS '- ' ;;
       '{{FORBIDDEN_PATHS_BLOCK}}') render_list_block FORBIDDEN_PATHS '- ' ;;
       *)

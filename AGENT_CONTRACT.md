@@ -23,6 +23,17 @@ depend on a specific editor, model vendor, CLI, or programming language.
 10. When a task is complete and its lasting guidance has been propagated, delete
    the completed task file.
 
+## Skill Routing
+
+Consumer repos may declare required skills in their local profile. The generated
+adapter must surface those declarations before local constraints so agents can
+load the right skill before changing matching code, docs, or workflow surfaces.
+
+Skill declarations are routing requirements, not a second planning system. They
+do not override the shared contract, the generated adapter, or canonical repo
+docs. They tell agents which reusable local instruction set to apply before
+starting work in a matching area.
+
 ## Control-Plane Rules
 
 - There is one authoritative planning chain per repo.
