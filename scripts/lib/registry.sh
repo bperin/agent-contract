@@ -17,7 +17,7 @@ ENTRIES
 registry_scan_known_paths() {
   repo_root=$1
   find "$repo_root" \
-    \( -path "$repo_root/.git" -o -path "$repo_root/.agent-scratch" -o -path "$repo_root/*/.git" -o -path "$repo_root/*/.agent-scratch" -o -path "$repo_root/*/node_modules" -o -path "$repo_root/*/.next" -o -path "$repo_root/*/dist" -o -path "$repo_root/*/.parcel-cache" \) -prune -o \
+    \( -path "$repo_root/.git" -o -path "$repo_root/.agent-scratch" -o -path "$repo_root/node_modules" -o -path "$repo_root/.next" -o -path "$repo_root/dist" -o -path "$repo_root/.parcel-cache" -o -path "$repo_root/*/.git" -o -path "$repo_root/*/.agent-scratch" -o -path "$repo_root/*/node_modules" -o -path "$repo_root/*/.next" -o -path "$repo_root/*/dist" -o -path "$repo_root/*/.parcel-cache" \) -prune -o \
     \( -name '.claude' -o -name '.cursor' -o -name '.gemini' -o -name '.kilocode' -o -name '.kilo' -o -name '.antigravity' -o -name '.roo' -o -name '.windsurf' -o -path "$repo_root/docs/superpowers" -o -path "$repo_root/*/docs/superpowers" \) \
     -print | sed "s#^$repo_root/##" | sort -u
 }
