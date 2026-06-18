@@ -16,9 +16,11 @@ depend on a specific editor, model vendor, CLI, or programming language.
 6. If the slice matches the local repo's implementation-review gate, run the
    required reviewer roles for that slice.
 7. Disposition findings before treating the slice as complete.
-8. If lasting product, workflow, or architecture truth changed, update the
+8. Commit stable slices routinely, including on feature branches. Do not leave
+   reviewer-cleared or otherwise workflow-complete work sitting uncommitted.
+9. If lasting product, workflow, or architecture truth changed, update the
    canonical doc that owns that truth.
-9. When a task is complete and its lasting guidance has been propagated, delete
+10. When a task is complete and its lasting guidance has been propagated, delete
    the completed task file.
 
 ## Control-Plane Rules
