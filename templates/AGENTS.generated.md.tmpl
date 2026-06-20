@@ -79,6 +79,14 @@ Read order:
 
 - completed task files are disposable execution records after durable guidance
   has been propagated into canonical docs
+- blocked or in-progress task files must not be deleted; keep them active,
+  retarget them, or explicitly complete and disposition them first
+- before deleting a task file, prove the task retirement gate: `status:
+  completed`, acceptance criteria dispositioned, reviewer findings dispositioned
+  when required, durable truth propagated, and verification evidence recorded
+- tracked task deletion should follow a committed completed/dispositioned task
+  state; the shared checker rejects deletion when the last committed task status
+  was not `completed`
 - unlinked plans are not active instructions
 - scratch output under `{{SCRATCH_SINK}}` is never authoritative
 

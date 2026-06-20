@@ -15,7 +15,9 @@ authoritative_chain:
   - active_plan_surface
   - stable_architecture_docs
 retention:
-  completed_tasks: delete_after_propagation
+  completed_tasks: delete_after_retirement_proof_gate
+  blocked_or_in_progress_tasks: keep_active_until_completed_or_retargeted
+  tracked_task_deletion_guard: last_committed_status_must_be_completed
   unlinked_plans: inactive
   archive_default: false
 scratch_sinks:

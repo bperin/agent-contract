@@ -20,8 +20,8 @@ depend on a specific editor, model vendor, CLI, or programming language.
    reviewer-cleared or otherwise workflow-complete work sitting uncommitted.
 9. If lasting product, workflow, or architecture truth changed, update the
    canonical doc that owns that truth.
-10. When a task is complete and its lasting guidance has been propagated, delete
-   the completed task file.
+10. When a task passes the task retirement proof gate, delete the completed
+   task file.
 
 ## Skill Routing
 
@@ -39,6 +39,9 @@ starting work in a matching area.
 - There is one authoritative planning chain per repo.
 - Active planning docs must be obvious and few.
 - Completed tasks are disposable execution records, not permanent history.
+- Blocked or in-progress tasks are not disposable. They must be kept active,
+  retargeted, or explicitly completed before they are removed from the active
+  task surface.
 - Unlinked plans are not active instructions.
 - Historical notes must not compete with current workflow docs.
 - When a repo defines review as part of a slice's gate, that review is part of
@@ -56,6 +59,27 @@ review loop is:
 Implementation review, architecture review, and drift/governance review are all
 hard gates for these slices. A task is not retireable until findings are fixed,
 explicitly deferred, or disproven with evidence.
+
+## Task Retirement Proof Gate
+
+A task file may be deleted only after all of these are true:
+
+- the task status is `completed`
+- acceptance criteria are checked or explicitly marked not applicable with a
+  reason
+- required reviewer findings are fixed, explicitly deferred, or disproven with
+  evidence
+- durable product, workflow, architecture, migration, or operations truth has
+  been propagated into the canonical doc or external system that owns it
+- verification evidence is recorded in the task, canonical doc, commit message,
+  or external system of record
+
+If any item is false or unknown, keep the task file active. Do not delete
+`blocked` or `in_progress` task files to make the task surface look clean.
+
+For tracked task files, deletion should normally happen after a committed
+completion/disposition state exists. The checker rejects deletion of a tracked
+task whose last committed status was not `completed`.
 
 External review tools are optional signals. The required gate is the repo's own
 specialized reviewer-agent loop, not a specific third-party service.

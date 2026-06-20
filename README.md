@@ -121,6 +121,13 @@ What it does:
 - verifies known scratch paths are redirected into the sink
 - fails on unmanaged known scratch paths, rogue task/plan surfaces, or
   forbidden local drift
+- fails when a tracked task file is being deleted but its last committed task
+  status was not `completed`
+
+The deletion guard exists because active task cleanup is allowed only after the
+task retirement proof gate. If a task is still `blocked` or `in_progress`, keep
+it active, retarget it, or commit an explicit completed/dispositioned state
+before deleting it in a later cleanup slice.
 
 ### Doctor
 

@@ -6,7 +6,7 @@ profile_fail() {
 }
 
 profile_resolve_dir() {
-  CDPATH= cd -- "$1" && pwd
+  CDPATH= cd -- "$1" && pwd -P
 }
 
 profile_find_file() {

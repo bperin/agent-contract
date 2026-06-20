@@ -11,5 +11,7 @@ flowchart TD
     H --> J{Task complete?}
     I --> J
     J -->|No| K[Keep task active]
-    J -->|Yes| L[Delete completed task file]
-    L --> M[Keep active surfaces small]
+    J -->|Yes| L{Retirement proof gate satisfied?}
+    L -->|No| K
+    L -->|Yes| M[Delete completed task file]
+    M --> N[Keep active surfaces small]
