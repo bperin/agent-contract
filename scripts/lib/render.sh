@@ -30,6 +30,17 @@ render_command_block() {
   profile_get VERIFICATION_COMMANDS
 }
 
+render_root_scratch_policy() {
+  case "${MANAGE_REPO_ROOT_SCRATCH:-true}" in
+    false|0|no|off)
+      printf '%s\n' '- root-level tool scratch redirects are disabled for this profile; nested repo redirects remain managed'
+      ;;
+    *)
+      printf '%s\n' '- root-level tool scratch redirects are managed for this profile'
+      ;;
+  esac
+}
+
 render_agents() {
   template_path=$CONTRACT_REPO_ROOT/templates/AGENTS.generated.md.tmpl
   apply_command="sh $CONTRACT_REPO_ROOT/scripts/apply.sh $PROFILE_KEY $CONSUMER_REPO_ROOT"
@@ -41,6 +52,7 @@ render_agents() {
       '{{PLAN_PATHS_BLOCK}}') render_list_block PLAN_PATHS '- ' ;;
       '{{ARCHITECTURE_PATHS_BLOCK}}') render_list_block ARCHITECTURE_PATHS '- ' ;;
       '{{VERIFICATION_COMMANDS_BLOCK}}') render_command_block ;;
+      '{{ROOT_SCRATCH_POLICY_BLOCK}}') render_root_scratch_policy ;;
       '{{REQUIRED_SKILLS_BLOCK}}') render_text_block REQUIRED_SKILLS '- ' ;;
       '{{LOCAL_CONSTRAINTS_BLOCK}}') render_text_block LOCAL_CONSTRAINTS '- ' ;;
       '{{FORBIDDEN_PATHS_BLOCK}}') render_list_block FORBIDDEN_PATHS '- ' ;;

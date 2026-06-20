@@ -23,9 +23,19 @@ registry_scan_known_paths() {
 }
 
 registry_managed_roots() {
-  repo_root=$1
-  printf '.\n'
-  profile_print_lines MANAGED_WORKTREE_ROOTS
+ repo_root=$1
+  manage_root=true
+  case "${MANAGE_REPO_ROOT_SCRATCH:-true}" in
+    false|0|no|off) manage_root=false ;;
+    *) printf '.\n' ;;
+  esac
+  profile_print_lines MANAGED_WORKTREE_ROOTS | while IFS= read -r root_rel; do
+    [ -n "$root_rel" ] || continue
+    if [ "$manage_root" = false ] && [ "$root_rel" = "." ]; then
+      continue
+    fi
+    printf '%s\n' "$root_rel"
+  done
   find "$repo_root" -mindepth 2 -maxdepth 3 -name .git -type d | \
     sed "s#^$repo_root/##" | sed 's#/.git$##' | sort -u
 }

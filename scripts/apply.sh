@@ -61,12 +61,36 @@ reconcile_binding() {
   report_line "INIT $source_rel -> $target_abs"
 }
 
+remove_disabled_root_binding() {
+  tool_name=$1
+  tool_path=$2
+  source_abs="$CONSUMER_REPO_ROOT/$tool_path"
+  target_abs="$CONSUMER_REPO_ROOT/$SCRATCH_SINK/root/$tool_name"
+
+  if [ ! -L "$source_abs" ]; then
+    return 0
+  fi
+
+  current_target=$(readlink "$source_abs")
+  if [ "$current_target" = "$target_abs" ]; then
+    rm -f "$source_abs"
+    report_line "REMOVE $tool_path"
+  fi
+}
+
 agents_target=$(profile_resolve_path "$GENERATED_AGENTS_PATH")
 agents_tmp=$(mktemp)
 trap 'rm -f "$agents_tmp"' EXIT HUP INT TERM
 render_agents > "$agents_tmp"
 
 ensure_directory "$(profile_resolve_path "$SCRATCH_SINK")"
+case "${MANAGE_REPO_ROOT_SCRATCH:-true}" in
+  false|0|no|off)
+    registry_entries | while IFS='|' read -r tool_name tool_path; do
+      remove_disabled_root_binding "$tool_name" "$tool_path"
+    done
+    ;;
+esac
 registry_iter_bindings "$CONSUMER_REPO_ROOT" "$SCRATCH_SINK" | while IFS='|' read -r _root_rel _tool_name source_rel target_abs; do
   reconcile_binding "$source_rel" "$target_abs"
 done

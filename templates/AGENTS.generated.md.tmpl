@@ -48,6 +48,7 @@ Read order:
 
 - shared scratch sink: `{{SCRATCH_SINK}}`
 - known tool scratch/task/plan directories are redirected into that sink
+{{ROOT_SCRATCH_POLICY_BLOCK}}
 - unmanaged parallel planning surfaces are not allowed
 - if a tool writes outside the sink, run the shared `check` or `doctor` command
   and reconcile the drift instead of treating the new path as authoritative
